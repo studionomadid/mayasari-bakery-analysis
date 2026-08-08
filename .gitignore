@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+.env.*
+
+# OS
+.DS_Store
+
+# Generated data
+data/processed/
+
+# Generated figures
+reports/figures/
+
+# Temporary files
+*.tmp
+*.temp
