@@ -1,28 +1,38 @@
 # Python
+
 __pycache__/
 *.py[cod]
 *.so
 
 # Virtual environment
+
 .venv/
 venv/
 
 # Jupyter
+
 .ipynb_checkpoints/
 
 # Environment variables
+
 .env
 .env.*
 
 # OS
+
 .DS_Store
 
 # Generated data
-data/processed/
+
+data/processed/*
+!data/processed/.gitkeep
 
 # Generated figures
-reports/figures/
+
+reports/figures/*
+!reports/figures/.gitkeep
 
 # Temporary files
+
 *.tmp
 *.temp
