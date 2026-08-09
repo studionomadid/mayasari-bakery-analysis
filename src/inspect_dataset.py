@@ -2,8 +2,9 @@ from pathlib import Path
 
 from openpyxl import load_workbook
 
+from src.contracts.paths import RAW_DATASET
 
-DATASET_PATH = Path("data/raw/mayasari_bakery_2025_synthetic.xlsx")
+DATASET_PATH = RAW_DATASET
 
 
 def inspect_workbook(path: Path) -> None:
@@ -47,14 +48,11 @@ def inspect_workbook(path: Path) -> None:
         print("SAMPLE DATA")
         print("-" * 80)
 
-        sample_count = 0
+    for sample_count, row in enumerate(rows, start=1):
+        print(row)
 
-        for row in rows:
-            print(row)
-            sample_count += 1
-
-            if sample_count >= 3:
-                break
+        if sample_count >= 3:
+            break
 
         print()
 

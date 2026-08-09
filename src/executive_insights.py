@@ -2,32 +2,37 @@ from pathlib import Path
 
 import pandas as pd
 
-
-ANALYTICS_DIR = Path("data/analytics")
-REPORTS_DIR = Path("reports/insights")
+from src.contracts.paths import (
+    CUSTOMER_PERFORMANCE_DATA,
+    EXECUTIVE_INSIGHTS_REPORT,
+    EXECUTIVE_KPIS_DATA,
+    MONTHLY_PERFORMANCE_DATA,
+    PRODUCT_PERFORMANCE_DATA,
+    PROFITABILITY_SUMMARY_DATA,
+)
 
 EXECUTIVE_DATA = (
-    ANALYTICS_DIR / "executive_kpis.parquet"
+    EXECUTIVE_KPIS_DATA
 )
 
 MONTHLY_DATA = (
-    ANALYTICS_DIR / "monthly_performance.parquet"
+    MONTHLY_PERFORMANCE_DATA
 )
 
 CUSTOMER_DATA = (
-    ANALYTICS_DIR / "customer_performance.parquet"
+    CUSTOMER_PERFORMANCE_DATA
 )
 
 PRODUCT_DATA = (
-    ANALYTICS_DIR / "product_performance.parquet"
+    PRODUCT_PERFORMANCE_DATA
 )
 
 PROFITABILITY_DATA = (
-    ANALYTICS_DIR / "profitability_summary.parquet"
+    PROFITABILITY_SUMMARY_DATA
 )
 
 OUTPUT = (
-    REPORTS_DIR / "executive_insights.md"
+    EXECUTIVE_INSIGHTS_REPORT
 )
 
 
@@ -177,10 +182,6 @@ def build_business_insights(
             "revenue",
         ]
     )
-
-    growth = monthly[
-        "mom_revenue_growth_pct"
-    ].dropna()
 
     best_growth_index = (
         monthly[
@@ -389,7 +390,7 @@ def render_report(
 ) -> Path:
     """Generate executive insights Markdown report."""
 
-    REPORTS_DIR.mkdir(
+    EXECUTIVE_INSIGHTS_REPORT.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
@@ -531,7 +532,7 @@ higher-margin products and customers.
             "from the current KPI thresholds.\n"
         )
 
-    report += f"""
+    report += """
 ---
 
 ## 7. Business Opportunities

@@ -1,11 +1,9 @@
-from pathlib import Path
 
 from openpyxl import load_workbook
 
+from src.contracts.paths import RAW_DATASET
 
-DATASET_PATH = Path(
-    "data/raw/mayasari_bakery_2025_synthetic.xlsx"
-)
+DATASET_PATH = RAW_DATASET
 
 
 def load_sheet(workbook, sheet_name):

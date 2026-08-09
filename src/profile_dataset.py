@@ -2,10 +2,9 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.contracts.paths import RAW_DATASET
 
-DATASET_PATH = Path(
-    "data/raw/mayasari_bakery_2025_synthetic.xlsx"
-)
+DATASET_PATH = RAW_DATASET
 
 
 def load_workbook(path: Path) -> dict[str, pd.DataFrame]:

@@ -29,18 +29,18 @@ from pathlib import Path
 
 import pandas as pd
 
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-
-ANALYTICS_DIR = PROJECT_ROOT / "data" / "analytics"
-REPORT_DIR = PROJECT_ROOT / "reports" / "insights"
+from src.contracts.paths import (
+    CLV_INSIGHTS_REPORT,
+    CUSTOMER_PERFORMANCE_DATA,
+    PROJECT_ROOT,
+)
 
 CUSTOMER_DATASET = (
-    ANALYTICS_DIR / "customer_performance.parquet"
+    CUSTOMER_PERFORMANCE_DATA
 )
 
 OUTPUT_REPORT = (
-    REPORT_DIR / "clv_insights.md"
+    CLV_INSIGHTS_REPORT
 )
 
 REQUIRED_COLUMNS = [
@@ -59,13 +59,13 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def format_currency(value: float | int) -> str:
+def format_currency(value: float) -> str:
     """Format a numeric value as Indonesian Rupiah."""
 
     return f"Rp {value:,.0f}"
 
 
-def format_millions(value: float | int) -> str:
+def format_millions(value: float) -> str:
     """Format a numeric value using millions."""
 
     return f"Rp {value / 1_000_000:.1f}M"

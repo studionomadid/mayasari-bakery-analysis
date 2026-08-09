@@ -10,22 +10,19 @@ using economic value, CLV, RFM behavior, and priority.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pandas as pd
 
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-
-ANALYTICS_DIR = PROJECT_ROOT / "data" / "analytics"
-REPORT_DIR = PROJECT_ROOT / "reports" / "insights"
+from src.contracts.paths import (
+    CUSTOMER_OPPORTUNITY_DATA,
+    CUSTOMER_OPPORTUNITY_REPORT,
+)
 
 INPUT_DATASET = (
-    ANALYTICS_DIR / "customer_opportunity.parquet"
+    CUSTOMER_OPPORTUNITY_DATA
 )
 
 OUTPUT_REPORT = (
-    REPORT_DIR / "customer_opportunity_insights.md"
+    CUSTOMER_OPPORTUNITY_REPORT
 )
 
 
@@ -65,7 +62,7 @@ OPPORTUNITY_ORDER = [
 ]
 
 
-def format_currency(value: float | int) -> str:
+def format_currency(value: float) -> str:
     """Format a numeric value as Indonesian Rupiah."""
 
     return f"Rp {value:,.0f}"
@@ -721,7 +718,7 @@ def generate_report() -> str:
         insights,
     )
 
-    REPORT_DIR.mkdir(
+    CUSTOMER_OPPORTUNITY_REPORT.parent.mkdir(
         parents=True,
         exist_ok=True,
     )

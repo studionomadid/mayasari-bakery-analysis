@@ -3,12 +3,13 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from src.contracts.paths import (
+    MONTHLY_PERFORMANCE_DATA,
+    SALES_FIGURES_DIR,
+)
 
-ANALYTICS_DIR = Path("data/analytics")
-FIGURES_DIR = Path("reports/figures")
-
-MONTHLY_DATA = ANALYTICS_DIR / "monthly_performance.parquet"
-SALES_FIGURES = FIGURES_DIR / "sales"
+MONTHLY_DATA = MONTHLY_PERFORMANCE_DATA
+SALES_FIGURES = SALES_FIGURES_DIR
 
 
 def load_monthly_data() -> pd.DataFrame:

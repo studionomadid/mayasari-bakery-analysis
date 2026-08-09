@@ -3,19 +3,22 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-ANALYTICS_DIR = Path("data/analytics")
-FIGURES_DIR = Path("reports/figures")
+from src.contracts.paths import (
+    EXECUTIVE_KPIS_DATA,
+    PROFITABILITY_FIGURES_DIR,
+    PROFITABILITY_SUMMARY_DATA,
+)
 
 PROFITABILITY_DATA = (
-    ANALYTICS_DIR / "profitability_summary.parquet"
+    PROFITABILITY_SUMMARY_DATA
 )
 
 EXECUTIVE_DATA = (
-    ANALYTICS_DIR / "executive_kpis.parquet"
+    EXECUTIVE_KPIS_DATA
 )
 
 PROFITABILITY_FIGURES = (
-    FIGURES_DIR / "profitability"
+    PROFITABILITY_FIGURES_DIR
 )
 
 

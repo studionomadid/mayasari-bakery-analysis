@@ -1,14 +1,7 @@
-from pathlib import Path
 
 import pandas as pd
 
-
-RAW_DATASET = Path(
-    "data/raw/mayasari_bakery_2025_synthetic.xlsx"
-)
-
-PROCESSED_DIR = Path("data/processed")
-
+from src.contracts.paths import PROCESSED_DIR, RAW_DATASET
 
 SHEETS = [
     "customers",

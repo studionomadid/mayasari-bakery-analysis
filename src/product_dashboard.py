@@ -3,16 +3,17 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
-ANALYTICS_DIR = Path("data/analytics")
-FIGURES_DIR = Path("reports/figures")
+from src.contracts.paths import (
+    PRODUCT_FIGURES_DIR,
+    PRODUCT_PERFORMANCE_DATA,
+)
 
 PRODUCT_DATA = (
-    ANALYTICS_DIR / "product_performance.parquet"
+    PRODUCT_PERFORMANCE_DATA
 )
 
 PRODUCT_FIGURES = (
-    FIGURES_DIR / "products"
+    PRODUCT_FIGURES_DIR
 )
 
 

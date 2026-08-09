@@ -3,13 +3,14 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from src.contracts.paths import (
+    EXECUTIVE_FIGURES_DIR,
+    EXECUTIVE_KPIS_DATA,
+)
 
-ANALYTICS_DIR = Path("data/analytics")
-FIGURES_DIR = Path("reports/figures")
+EXECUTIVE_DATA = EXECUTIVE_KPIS_DATA
 
-EXECUTIVE_DATA = ANALYTICS_DIR / "executive_kpis.parquet"
-
-EXECUTIVE_FIGURES = FIGURES_DIR / "executive"
+EXECUTIVE_FIGURES = EXECUTIVE_FIGURES_DIR
 
 
 def load_executive_data() -> pd.Series:
