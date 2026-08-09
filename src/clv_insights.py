@@ -12,10 +12,19 @@ M12.2.1 focuses on CLV metric reconciliation:
   against total annualized CLV.
 - Historical CLV concentration is reported separately
   against total historical CLV.
+
+M12.2.2 extends the CLV insight layer with:
+
+- CLV distribution statistics.
+- Annualized CLV contribution by tier.
+- Customer value-driver analysis.
+- Correlation-based association analysis.
+- Management-oriented CLV interpretation.
 """
 
 from __future__ import annotations
 
+from math import ceil
 from pathlib import Path
 
 import pandas as pd
@@ -204,6 +213,10 @@ def build_tier_summary(
         customer["gross_profit"].sum()
     )
 
+    total_annualized_clv = (
+        customer["annualized_clv"].sum()
+    )
+
     summary = (
         customer.groupby(
             "clv_tier",
@@ -222,8 +235,24 @@ def build_tier_summary(
                 "gross_profit",
                 "sum",
             ),
+            annualized_clv=(
+                "annualized_clv",
+                "sum",
+            ),
             average_annualized_clv=(
                 "annualized_clv",
+                "mean",
+            ),
+            average_transactions=(
+                "transactions",
+                "mean",
+            ),
+            average_lifetime_days=(
+                "observed_lifetime_days",
+                "mean",
+            ),
+            average_margin_pct=(
+                "gross_margin_pct",
                 "mean",
             ),
         )
@@ -248,6 +277,12 @@ def build_tier_summary(
         * 100
     )
 
+    summary["annualized_clv_share_pct"] = (
+        summary["annualized_clv"]
+        / total_annualized_clv
+        * 100
+    )
+
     tier_order = [
         "Bronze",
         "Silver",
@@ -261,11 +296,30 @@ def build_tier_summary(
         ordered=True,
     )
 
-    summary = summary.sort_values(
-        "clv_tier"
-    ).reset_index(drop=True)
+    summary = (
+        summary
+        .sort_values("clv_tier")
+        .reset_index(drop=True)
+    )
 
     return summary
+
+
+def calculate_clv_distribution(
+    customer: pd.DataFrame,
+) -> dict[str, float]:
+    """Calculate annualized CLV distribution statistics."""
+
+    clv = customer["annualized_clv"]
+
+    return {
+        "min_annualized_clv": float(clv.min()),
+        "q1_annualized_clv": float(clv.quantile(0.25)),
+        "median_annualized_clv": float(clv.median()),
+        "q3_annualized_clv": float(clv.quantile(0.75)),
+        "max_annualized_clv": float(clv.max()),
+        "mean_annualized_clv": float(clv.mean()),
+    }
 
 
 def calculate_clv_concentration(
@@ -277,7 +331,7 @@ def calculate_clv_concentration(
     Annualized CLV concentration:
 
         selected annualized CLV
-        ----------------------
+        -----------------------
         total annualized CLV
 
     Historical CLV concentration:
@@ -308,14 +362,19 @@ def calculate_clv_concentration(
             "Total historical CLV must be greater than zero."
         )
 
-    top10 = customer.nlargest(
+    top10_count = min(
         10,
+        len(customer),
+    )
+
+    top10 = customer.nlargest(
+        top10_count,
         "annualized_clv",
     )
 
     top25_count = max(
         1,
-        int(len(customer) * 0.25),
+        ceil(len(customer) * 0.25),
     )
 
     top25 = customer.nlargest(
@@ -381,6 +440,167 @@ def calculate_clv_concentration(
     }
 
 
+def calculate_value_driver_analysis(
+    customer: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Calculate associations between annualized CLV
+    and selected customer economic drivers.
+
+    Correlation indicates statistical association only.
+    It must not be interpreted as causation.
+    """
+
+    driver_columns = [
+        "revenue",
+        "transactions",
+        "active_months",
+        "observed_lifetime_days",
+        "gross_margin_pct",
+        "average_transaction_value",
+        "historical_clv",
+    ]
+
+    rows: list[dict[str, float | str]] = []
+
+    for column in driver_columns:
+        correlation = customer[
+            "annualized_clv"
+        ].corr(customer[column])
+
+        if pd.isna(correlation):
+            correlation = 0.0
+
+        rows.append(
+            {
+                "driver": column,
+                "correlation": float(correlation),
+                "absolute_correlation": abs(
+                    float(correlation)
+                ),
+            }
+        )
+
+    result = pd.DataFrame(rows)
+
+    result["relationship"] = result[
+        "correlation"
+    ].apply(
+        classify_correlation
+    )
+
+    return (
+        result
+        .sort_values(
+            "absolute_correlation",
+            ascending=False,
+        )
+        .reset_index(drop=True)
+    )
+
+
+def classify_correlation(
+    correlation: float,
+) -> str:
+    """Classify the strength of a correlation."""
+
+    absolute_value = abs(correlation)
+
+    if absolute_value >= 0.70:
+        strength = "Strong"
+    elif absolute_value >= 0.40:
+        strength = "Moderate"
+    elif absolute_value >= 0.20:
+        strength = "Weak"
+    else:
+        strength = "Very weak"
+
+    direction = (
+        "positive"
+        if correlation >= 0
+        else "negative"
+    )
+
+    return f"{strength} {direction}"
+
+
+def generate_management_insights(
+    customer: pd.DataFrame,
+    tier_summary: pd.DataFrame,
+    driver_analysis: pd.DataFrame,
+) -> dict[str, str]:
+    """Generate concise management-oriented CLV insights."""
+
+    platinum = tier_summary.loc[
+        tier_summary["clv_tier"] == "Platinum"
+    ]
+
+    gold = tier_summary.loc[
+        tier_summary["clv_tier"] == "Gold"
+    ]
+
+    if platinum.empty:
+        platinum_clv_share = 0.0
+    else:
+        platinum_clv_share = float(
+            platinum[
+                "annualized_clv_share_pct"
+            ].iloc[0]
+        )
+
+    if gold.empty:
+        gold_clv_share = 0.0
+    else:
+        gold_clv_share = float(
+            gold[
+                "annualized_clv_share_pct"
+            ].iloc[0]
+        )
+
+    top_driver = driver_analysis.iloc[0]
+
+    top_driver_name = str(
+        top_driver["driver"]
+    )
+
+    top_driver_correlation = float(
+        top_driver["correlation"]
+    )
+
+    if top_driver_correlation >= 0:
+        driver_direction = "positively"
+    else:
+        driver_direction = "negatively"
+
+    return {
+        "protection_priority": (
+            "Platinum customers should receive "
+            "priority retention attention because "
+            f"they contribute {platinum_clv_share:.1f}% "
+            "of total annualized CLV."
+        ),
+        "development_priority": (
+            "Gold customers represent a potential "
+            "upgrade pool because they occupy the "
+            "second-highest relative CLV tier and "
+            f"contribute {gold_clv_share:.1f}% "
+            "of total annualized CLV."
+        ),
+        "driver_priority": (
+            f"{top_driver_name} shows the strongest "
+            f"observed association with annualized CLV "
+            f"({top_driver_correlation:.2f}), "
+            f"with a {driver_direction} relationship."
+        ),
+        "interpretation_note": (
+            "Correlation identifies association rather "
+            "than causation. Customer-level actions should "
+            "therefore be validated through behavioral and "
+            "commercial analysis."
+        ),
+    }
+
+
 def generate_insights(
     customer: pd.DataFrame,
     tier_summary: pd.DataFrame,
@@ -407,6 +627,24 @@ def generate_insights(
 
     concentration = calculate_clv_concentration(
         customer
+    )
+
+    distribution = calculate_clv_distribution(
+        customer
+    )
+
+    driver_analysis = (
+        calculate_value_driver_analysis(
+            customer
+        )
+    )
+
+    management_insights = (
+        generate_management_insights(
+            customer,
+            tier_summary,
+            driver_analysis,
+        )
     )
 
     highest_annualized = customer.loc[
@@ -450,6 +688,11 @@ def generate_insights(
             highest_margin
         ),
         "tier_summary": tier_summary,
+        "driver_analysis": driver_analysis,
+        "management_insights": (
+            management_insights
+        ),
+        **distribution,
         **concentration,
     }
 
@@ -496,6 +739,18 @@ def render_report(
         "highest_margin"
     ]
 
+    tier_summary = insights[
+        "tier_summary"
+    ]
+
+    driver_analysis = insights[
+        "driver_analysis"
+    ]
+
+    management_insights = insights[
+        "management_insights"
+    ]
+
     top10_annualized_share_pct = insights[
         "top10_annualized_share_pct"
     ]
@@ -512,26 +767,37 @@ def render_report(
         "top25_historical_share_pct"
     ]
 
-    tier_summary = insights[
-        "tier_summary"
-    ]
-
     tier_rows: list[str] = []
 
     for _, row in tier_summary.iterrows():
         tier_rows.append(
-            "| "
-            f"{row['clv_tier']} | "
-            f"{int(row['customers']):,} | "
-            f"{row['customer_share_pct']:.1f}% | "
-            f"{format_millions(row['revenue'])} | "
-            f"{row['revenue_share_pct']:.1f}% | "
-            f"{format_millions(row['gross_profit'])} | "
-            f"{row['gross_profit_share_pct']:.1f}% | "
-            f"{format_currency(row['average_annualized_clv'])} |"
+            f"| {row['clv_tier']} "
+            f"| {int(row['customers']):,} "
+            f"| {row['customer_share_pct']:.1f}% "
+            f"| {format_currency(row['revenue'])} "
+            f"| {row['revenue_share_pct']:.1f}% "
+            f"| {format_currency(row['gross_profit'])} "
+            f"| {row['gross_profit_share_pct']:.1f}% "
+            f"| {format_currency(row['annualized_clv'])} "
+            f"| {row['annualized_clv_share_pct']:.1f}% "
+            f"| {format_currency(row['average_annualized_clv'])} "
+            f"| {row['average_transactions']:.2f} "
+            f"| {row['average_lifetime_days']:.1f} "
+            f"| {row['average_margin_pct']:.2f}% |"
         )
 
     tier_table = "\n".join(tier_rows)
+
+    driver_rows: list[str] = []
+
+    for _, row in driver_analysis.iterrows():
+        driver_rows.append(
+            f"| {row['driver']} "
+            f"| {row['correlation']:.3f} "
+            f"| {row['relationship']} |"
+        )
+
+    driver_table = "\n".join(driver_rows)
 
     return f"""# Mayasari Bakery — Customer Lifetime Value Insights
 
@@ -540,9 +806,9 @@ def render_report(
 The customer portfolio contains **{len(customer):,} customers**.
 
 Customers generated total revenue of
-**{format_millions(total_revenue)}**
+**{format_currency(total_revenue)}**
 and total gross profit of
-**{format_millions(total_gross_profit)}**.
+**{format_currency(total_gross_profit)}**.
 
 Historical CLV averages
 **{format_currency(average_historical_clv)}**
@@ -562,44 +828,46 @@ Therefore:
 
 ---
 
-## 2. CLV Distribution
+## 2. Annualized CLV Distribution
 
-CLV is evaluated using annualized CLV to account for differences
-in observed customer lifetime.
+Annualized CLV distribution:
 
-Customers are classified into four relative-value tiers:
+| Statistic | Value |
+| --------- | ----: |
+| Minimum | {format_currency(insights['min_annualized_clv'])} |
+| Q1 | {format_currency(insights['q1_annualized_clv'])} |
+| Median | {format_currency(insights['median_annualized_clv'])} |
+| Q3 | {format_currency(insights['q3_annualized_clv'])} |
+| Maximum | {format_currency(insights['max_annualized_clv'])} |
 
-- **Platinum** — top 25% annualized CLV
-- **Gold** — 25–50% annualized CLV
-- **Silver** — 50–75% annualized CLV
-- **Bronze** — bottom 25% annualized CLV
+The distribution shows the spread of normalized customer value
+across the observed customer population.
 
-This relative approach avoids imposing arbitrary nominal CLV thresholds
-on the customer population.
-
-Annualized CLV is used for customer ranking and concentration analysis.
-
-Historical CLV remains the realized gross-profit contribution
-generated during the observed customer lifetime.
+The gap between median and maximum CLV should be monitored because
+a large difference may indicate a concentrated high-value customer
+population.
 
 ---
 
 ## 3. CLV Tier Performance
 
-| Tier | Customers | Customer Share | Revenue | Revenue Share | Gross Profit | GP Share | Avg Annualized CLV |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+CLV tiers are based on relative annualized CLV:
+
+- **Platinum** — top 25%
+- **Gold** — 25–50%
+- **Silver** — 50–75%
+- **Bronze** — bottom 25%
+
+| Tier | Customers | Customer Share | Revenue | Revenue Share | Gross Profit | GP Share | Annualized CLV | CLV Share | Avg Annualized CLV | Avg Transactions | Avg Lifetime (Days) | Avg Margin |
+| ---- | --------: | -------------: | ------: | ------------: | -----------: | -------: | --------------: | --------: | -----------------: | ---------------: | ------------------: | ---------: |
 {tier_table}
 
-### Management Interpretation
+The annualized CLV share column shows how normalized customer value
+is distributed across the four relative-value tiers.
 
-The tier structure provides a relative ranking of customer economic value.
-
-Platinum and Gold customers should receive greater retention attention
-because they represent the highest annualized customer value.
-
-Bronze customers should not automatically be treated as low-potential
-customers. Their lower current annualized CLV may reflect shorter
-observed lifetime or lower purchase frequency.
+Platinum and Gold customers should receive greater retention and
+development attention because they represent the highest-value
+segments of the current customer portfolio.
 
 ---
 
@@ -635,9 +903,15 @@ Customer **{highest_revenue['customer_id']}**
 has the highest historical revenue at
 **{format_currency(highest_revenue['revenue'])}**.
 
+### Highest Gross-Margin Customer
+
+Customer **{highest_margin['customer_id']}**
+has the highest gross-margin percentage at
+**{highest_margin['gross_margin_pct']:.2f}%**.
+
 These customers should be evaluated separately because revenue,
-historical gross-profit contribution, and annualized CLV represent
-different dimensions of customer value.
+historical gross-profit contribution, margin, and annualized CLV
+represent different dimensions of customer economics.
 
 ---
 
@@ -669,14 +943,37 @@ The same customers selected by annualized CLV ranking contribute:
   of total historical CLV.
 
 Historical CLV concentration provides a realized profitability view,
-while annualized CLV concentration provides a normalized customer-value view.
+while annualized CLV concentration provides a normalized customer-value
+view.
 
-### Metric Reconciliation
+---
+
+## 6. Customer Value Drivers
+
+Annualized CLV is compared with selected customer economic and
+behavioral variables.
+
+The correlation values below indicate **association**, not causation.
+
+| Driver | Correlation with Annualized CLV | Relationship |
+| ------ | ------------------------------: | ------------ |
+{driver_table}
+
+The strongest observed association is:
+
+**{management_insights['driver_priority']}**
+
+This relationship should be investigated further through behavioral
+analysis before being translated into a causal business conclusion.
+
+---
+
+## 7. Metric Reconciliation
 
 The underlying CLV totals reconcile as follows:
 
 | Metric | Total |
-| --- | ---: |
+| ------ | ----: |
 | Total annualized CLV | {format_currency(insights['total_annualized_clv'])} |
 | Total historical CLV | {format_currency(insights['total_historical_clv'])} |
 | Total customer gross profit | {format_currency(total_gross_profit)} |
@@ -685,21 +982,52 @@ Historical CLV and customer gross profit are equal in the current
 analytical model.
 
 Annualized CLV is intentionally **not** treated as historical gross profit.
-It is a normalized value indicator derived from customer economics.
+
+It is a normalized customer-value indicator derived from customer
+economics.
 
 ---
 
-## 6. Customer Value vs Profitability
+## 8. Management Priorities
 
-The highest customer gross-margin percentage is observed for
-**{highest_margin['customer_id']}**,
-at **{highest_margin['gross_margin_pct']:.2f}%**.
+### Priority 1 — Protect Platinum Customers
 
-This reinforces that customer value should not be evaluated from revenue
-alone.
+{management_insights['protection_priority']}
 
-A customer can have high revenue but lower margin, while another customer
-may generate less revenue but produce stronger gross-profit economics.
+Potential actions include:
+
+- Priority service
+- Personalized offers
+- Repeat-purchase reminders
+- Product recommendations
+- Early access to seasonal products
+
+### Priority 2 — Develop Gold Customers
+
+{management_insights['development_priority']}
+
+Potential development levers include:
+
+- Increasing purchase frequency
+- Increasing basket value
+- Expanding product breadth
+- Encouraging repeat purchases
+- Improving customer lifetime
+
+### Priority 3 — Investigate Value Drivers
+
+{management_insights['driver_priority']}
+
+{management_insights['interpretation_note']}
+
+---
+
+## 9. Customer Value vs Profitability
+
+Customer value should not be evaluated from revenue alone.
+
+A customer can generate high revenue but lower margin, while another
+customer may generate less revenue but stronger gross-profit economics.
 
 Management should therefore combine:
 
@@ -715,105 +1043,78 @@ when evaluating strategic customer value.
 
 ---
 
-## 7. Business Opportunities
+## 10. Business Opportunities
 
-### Opportunity 1 — Protect Platinum Customers
+### Opportunity 1 — Protect High-Value Customers
 
-Create retention and relationship-management actions for the highest CLV
-customers.
-
-Potential actions include:
-
-- Priority service
-- Personalized offers
-- Repeat-purchase reminders
-- Product recommendations
-- Early access to seasonal products
+Create retention and relationship-management actions for Platinum
+customers and other customers with unusually high annualized CLV.
 
 ### Opportunity 2 — Develop Gold Customers
 
 Gold customers represent an attractive upgrade pool.
 
-Management can target these customers with strategies designed to increase:
+Focus on increasing purchase frequency, basket value, product breadth,
+and customer lifetime.
 
-- Purchase frequency
-- Basket value
-- Product breadth
-- Customer lifetime
-
-### Opportunity 3 — Identify Emerging Customers
+### Opportunity 3 — Monitor Emerging Customers
 
 Some Bronze and Silver customers may have relatively short observed
 lifetimes.
 
 These customers should be monitored for early signals of increasing
-purchase frequency or transaction value before they become high-value
-customers.
+purchase frequency or transaction value.
 
-### Opportunity 4 — Protect Gross-Profit Contribution
+### Opportunity 4 — Validate CLV Drivers
 
-CLV management should prioritize gross-profit contribution rather than
-revenue alone.
+The strongest statistical associations with annualized CLV should
+be investigated through customer behavior analysis.
 
-Customer retention programs should therefore be evaluated against
-incremental gross profit and not only incremental sales.
+Correlation should be treated as a prioritization tool for further
+analysis, not as evidence of causality.
 
 ---
 
-## 8. Key Risks
+## 11. Analytical Limitations
 
+Several limitations should be considered:
+
+- Historical CLV represents realized gross-profit contribution,
+  not future customer lifetime value.
+- Annualized CLV is a normalized indicator rather than realized profit.
 - Annualized CLV can be sensitive to short observed customer lifetimes.
-- High-revenue customers are not necessarily the highest-margin customers.
 - Relative CLV tiers rank customers within the current population but do not
-  guarantee future customer behavior.
-- Aggressive discounting may increase revenue while reducing customer
-  profitability.
-- Annualized CLV should not be interpreted as realized historical profit.
+  establish absolute economic thresholds.
+- Correlation analysis identifies association rather than causation.
+- Customer behavior may change after the observation period.
+- Gross margin is based on the current analytical gross-profit definition.
+
+Annualized CLV should therefore be interpreted as a comparative
+customer-value indicator rather than a forecast of future realized profit.
 
 ---
 
-## 9. Management Priorities
+## 12. Conclusion
 
-### Priority 1 — Retain High-Value Customers
+The customer portfolio demonstrates meaningful variation in economic value.
 
-Prioritize Platinum customers for retention and relationship programs.
+Platinum customers represent the highest relative annualized customer
+value and should receive priority retention attention.
 
-### Priority 2 — Upgrade Gold Customers
+Gold customers represent an important development opportunity because
+they already demonstrate relatively strong annualized customer value.
 
-Identify practical interventions that can move Gold customers toward
-Platinum-level economic contribution.
+The distribution and concentration metrics provide visibility into
+whether customer value is broadly distributed or concentrated among
+a smaller group of customers.
 
-### Priority 3 — Monitor Emerging Customers
+The value-driver analysis provides a structured starting point for
+understanding which customer behaviors and economic characteristics
+are most strongly associated with annualized CLV.
 
-Track customers with improving transaction frequency, basket value,
-and lifetime signals.
-
-### Priority 4 — Measure Incremental Profit
-
-Evaluate retention and customer-development programs using incremental
-gross profit and CLV rather than revenue alone.
-
----
-
-## 10. Executive Takeaway
-
-Mayasari Bakery's customer portfolio contains meaningful variation
-in customer economic value.
-
-Annualized CLV provides a normalized relative indicator that can
-help management prioritize retention and customer-development resources.
-
-The most valuable customers should be protected, high-potential customers
-should be developed, and lower-value customers should be evaluated for
-future growth potential rather than treated as a homogeneous group.
-
-The key management principle is:
-
-**Grow customer lifetime value while protecting gross-profit economics.**
-
----
-
-*Generated from Mayasari Bakery customer analytical dataset.*
+The combination of CLV, revenue, gross profit, transaction frequency,
+customer lifetime, average transaction value, and margin provides a more
+complete framework for customer-value management than revenue alone.
 """
 
 
@@ -878,7 +1179,9 @@ def print_summary(
     ]
 
     print("=" * 80)
-    print("MAYASARI BAKERY — M12.2 CLV INSIGHTS")
+    print(
+        "MAYASARI BAKERY — M12.2 CLV INSIGHTS"
+    )
     print("=" * 80)
     print()
 
