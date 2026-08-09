@@ -16,7 +16,6 @@ from src.contracts.paths import (
     PROFITABILITY_SUMMARY_DATA,
 )
 
-
 EXPECTED_SCHEMAS = {
     "executive_kpis": {
         "path": EXECUTIVE_KPIS_DATA,

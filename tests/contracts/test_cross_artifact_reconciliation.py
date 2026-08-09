@@ -20,7 +20,6 @@ from src.contracts.paths import (
     SALES_DATA,
 )
 
-
 TOLERANCE = 0.01
 PERCENT_TOLERANCE = 0.0001
 

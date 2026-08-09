@@ -2,28 +2,35 @@
 
 from pathlib import Path
 
-
 SRC_DIR = Path(__file__).resolve().parents[2] / "src"
 
-
 EXPECTED_SOURCES = {
-    "revenue_dashboard.py": "MONTHLY_PERFORMANCE_DATA",
-    "product_dashboard.py": "PRODUCT_PERFORMANCE_DATA",
-    "customer_dashboard.py": "CUSTOMER_PERFORMANCE_DATA",
-    "profitability_dashboard.py": "PROFITABILITY_SUMMARY_DATA",
-    "profitability_dashboard.py": "EXECUTIVE_KPIS_DATA",
+    "revenue_dashboard.py": (
+        "MONTHLY_PERFORMANCE_DATA",
+    ),
+    "product_dashboard.py": (
+        "PRODUCT_PERFORMANCE_DATA",
+    ),
+    "customer_dashboard.py": (
+        "CUSTOMER_PERFORMANCE_DATA",
+    ),
+    "profitability_dashboard.py": (
+        "PROFITABILITY_SUMMARY_DATA",
+        "EXECUTIVE_KPIS_DATA",
+    ),
 }
 
 
 def test_dashboard_source_contracts() -> None:
     """Dashboards must consume BI artifacts through path contracts."""
 
-    for filename, expected_source in EXPECTED_SOURCES.items():
+    for filename, expected_sources in EXPECTED_SOURCES.items():
         source = (SRC_DIR / filename).read_text()
 
-        assert expected_source in source, (
-            f"{filename} must use {expected_source}"
-        )
+        for expected_source in expected_sources:
+            assert expected_source in source, (
+                f"{filename} must use {expected_source}"
+            )
 
 
 def test_dashboards_do_not_read_sales_directly() -> None:
