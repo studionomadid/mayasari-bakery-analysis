@@ -3,7 +3,6 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-
 # ============================================================
 # CONFIGURATION
 # ============================================================
@@ -13,17 +12,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SALES_DATA = BASE_DIR / "data/processed/sales.parquet"
 EXPENSE_DATA = BASE_DIR / "data/processed/expenses.parquet"
 
-
 st.set_page_config(
     page_title="Mayasari Bakery | Executive Dashboard",
     page_icon="🥐",
     layout="wide",
 )
 
-
 # ============================================================
 # DATA LOADING
 # ============================================================
+
 
 @st.cache_data
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -48,6 +46,7 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
 # ============================================================
 # KPI CALCULATION
 # ============================================================
+
 
 def calculate_kpis(
     sales: pd.DataFrame,
@@ -102,6 +101,7 @@ def calculate_kpis(
 # FORMATTING
 # ============================================================
 
+
 def format_rupiah(value: float) -> str:
     """Format numeric value as Indonesian Rupiah."""
 
@@ -111,6 +111,7 @@ def format_rupiah(value: float) -> str:
 # ============================================================
 # DASHBOARD
 # ============================================================
+
 
 def main() -> None:
     """Render Mayasari Bakery executive dashboard."""
@@ -236,7 +237,7 @@ def main() -> None:
 
     st.dataframe(
         financial_summary,
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 
