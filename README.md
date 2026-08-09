@@ -1070,4 +1070,3 @@ The project therefore demonstrates how transactional data can be transformed int
 **StudioNomad**
 
 Portfolio project — Mayasari Bakery Business Intelligence & Data Analytics Case Study.
-EOF
