@@ -10,16 +10,20 @@ and total gross profit of
 **Rp 334.3M**.
 
 Historical CLV averages
-**Rp 393.3K**
+**Rp 393,273**
 per customer.
 
 Annualized CLV averages
-**Rp 549.3K**,
+**Rp 549,345**,
 with a median of
-**Rp 461.6K**.
+**Rp 461,554**.
 
 In this analytical model, historical CLV represents
 historical customer gross-profit contribution.
+
+Therefore:
+
+**Historical CLV = Customer Gross Profit**
 
 ---
 
@@ -38,23 +42,28 @@ Customers are classified into four relative-value tiers:
 This relative approach avoids imposing arbitrary nominal CLV thresholds
 on the customer population.
 
+Annualized CLV is used for customer ranking and concentration analysis.
+
+Historical CLV remains the realized gross-profit contribution
+generated during the observed customer lifetime.
+
 ---
 
 ## 3. CLV Tier Performance
 
 | Tier | Customers | Customer Share | Revenue | Revenue Share | Gross Profit | GP Share | Avg Annualized CLV |
-| ---- | --------: | -------------: | ------: | ------------: | -----------: | -------: | -----------------: |
-| Bronze | 213 | 25.1% | Rp 97.1M | 12.7% | Rp 43.5M | 13.0% | Rp 286.8K |
-| Silver | 212 | 24.9% | Rp 140.9M | 18.5% | Rp 62.8M | 18.8% | Rp 407.0K |
-| Gold | 212 | 24.9% | Rp 184.7M | 24.2% | Rp 81.7M | 24.4% | Rp 526.9K |
-| Platinum | 213 | 25.1% | Rp 339.2M | 44.5% | Rp 146.3M | 43.8% | Rp 975.9K |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Bronze | 213 | 25.1% | Rp 97.1M | 12.7% | Rp 43.5M | 13.0% | Rp 286,846 |
+| Silver | 212 | 24.9% | Rp 140.9M | 18.5% | Rp 62.8M | 18.8% | Rp 406,978 |
+| Gold | 212 | 24.9% | Rp 184.7M | 24.2% | Rp 81.7M | 24.4% | Rp 526,899 |
+| Platinum | 213 | 25.1% | Rp 339.2M | 44.5% | Rp 146.3M | 43.8% | Rp 975,885 |
 
 ### Management Interpretation
 
 The tier structure provides a relative ranking of customer economic value.
 
 Platinum and Gold customers should receive greater retention attention
-because they represent the highest expected annualized customer value.
+because they represent the highest annualized customer value.
 
 Bronze customers should not automatically be treated as low-potential
 customers. Their lower current annualized CLV may reflect shorter
@@ -68,13 +77,13 @@ observed lifetime or lower purchase frequency.
 
 Customer **C0346**
 has the highest annualized CLV at
-**Rp 2.7M**.
+**Rp 2,672,143**.
 
 Historical CLV:
-**Rp 1.6M**
+**Rp 1,558,750**
 
 Revenue:
-**Rp 3.7M**
+**Rp 3,715,450**
 
 Transactions:
 **14**
@@ -86,13 +95,13 @@ Observed lifetime:
 
 Customer **C0531**
 has the highest historical CLV at
-**Rp 2.0M**.
+**Rp 2,000,425**.
 
 ### Highest Revenue Customer
 
 Customer **C0560**
 has the highest historical revenue at
-**Rp 4.9M**.
+**Rp 4,851,300**.
 
 These customers should be evaluated separately because revenue,
 historical gross-profit contribution, and annualized CLV represent
@@ -102,14 +111,49 @@ different dimensions of customer value.
 
 ## 5. CLV Concentration
 
-The top 10 customers by annualized CLV account for approximately
-**4.71%** of total historical gross-profit contribution.
+### Annualized CLV Concentration
 
-The top 25% of customers by annualized CLV account for approximately
-**43.60%** of total historical gross-profit contribution.
+The top 10 customers by annualized CLV account for
+**5.13%**
+of total annualized CLV.
 
-This indicates the degree to which customer economic value is
-concentrated within the highest-value portion of the customer base.
+The top 25% of customers by annualized CLV account for
+**44.39%**
+of total annualized CLV.
+
+This is the primary CLV concentration metric because both the
+numerator and denominator use the same annualized CLV measure.
+
+### Historical CLV Concentration
+
+The same customers selected by annualized CLV ranking contribute:
+
+- Top 10 annualized-CLV customers:
+  **4.71%**
+  of total historical CLV.
+
+- Top 25% annualized-CLV customers:
+  **43.60%**
+  of total historical CLV.
+
+Historical CLV concentration provides a realized profitability view,
+while annualized CLV concentration provides a normalized customer-value view.
+
+### Metric Reconciliation
+
+The underlying CLV totals reconcile as follows:
+
+| Metric | Total |
+| --- | ---: |
+| Total annualized CLV | Rp 466,943,654 |
+| Total historical CLV | Rp 334,282,225 |
+| Total customer gross profit | Rp 334,282,225 |
+
+Historical CLV and customer gross profit are equal in the current
+analytical model.
+
+Annualized CLV is intentionally **not** treated as historical gross profit.
+It is a normalized value indicator derived from customer economics.
 
 ---
 
@@ -132,6 +176,7 @@ Management should therefore combine:
 - Gross margin
 - Transaction frequency
 - Observed lifetime
+- Historical CLV
 - Annualized CLV
 
 when evaluating strategic customer value.
@@ -191,6 +236,7 @@ incremental gross profit and not only incremental sales.
   guarantee future customer behavior.
 - Aggressive discounting may increase revenue while reducing customer
   profitability.
+- Annualized CLV should not be interpreted as realized historical profit.
 
 ---
 
@@ -222,7 +268,7 @@ gross profit and CLV rather than revenue alone.
 Mayasari Bakery's customer portfolio contains meaningful variation
 in customer economic value.
 
-Annualized CLV provides a forward-looking relative indicator that can
+Annualized CLV provides a normalized relative indicator that can
 help management prioritize retention and customer-development resources.
 
 The most valuable customers should be protected, high-potential customers
