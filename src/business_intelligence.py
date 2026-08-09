@@ -1,15 +1,13 @@
-from pathlib import Path
 
 import pandas as pd
 
-
-PROCESSED_DIR = Path("data/processed")
-ANALYTICS_DIR = Path("data/analytics")
-
-SALES_DATA = PROCESSED_DIR / "sales.parquet"
-CUSTOMERS_DATA = PROCESSED_DIR / "customers.parquet"
-PRODUCTS_DATA = PROCESSED_DIR / "products.parquet"
-EXPENSES_DATA = PROCESSED_DIR / "expenses.parquet"
+from src.contracts.paths import (
+    ANALYTICS_DIR,
+    CUSTOMERS_DATA,
+    EXPENSES_DATA,
+    PRODUCTS_DATA,
+    SALES_DATA,
+)
 
 
 def load_data() -> tuple[

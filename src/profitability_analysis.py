@@ -1,11 +1,13 @@
-from pathlib import Path
-
 import pandas as pd
 
+from src.contracts.paths import (
+    EXPENSES_DATA,
+    MONTHLY_KPI_DATA,
+    SALES_DATA,
+)
 
-SALES_DATA = Path("data/processed/sales.parquet")
-EXPENSE_DATA = Path("data/processed/expenses.parquet")
-KPI_DATA = Path("data/processed/monthly_kpi.parquet")
+EXPENSE_DATA = EXPENSES_DATA
+KPI_DATA = MONTHLY_KPI_DATA
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -470,8 +472,7 @@ def validate_against_source(
 
     all_pass = True
 
-    for metric in source_values:
-        source_value = source_values[metric]
+    for metric, source_value in source_values.items():
         calculated_value = calculated_values[metric]
 
         passed = source_value == calculated_value
@@ -523,8 +524,7 @@ def validate_against_kpi(
 
     all_pass = True
 
-    for metric in analysis_values:
-        analysis_value = analysis_values[metric]
+    for metric, analysis_value in analysis_values.items():
         kpi_value = kpi_values[metric]
 
         passed = analysis_value == kpi_value

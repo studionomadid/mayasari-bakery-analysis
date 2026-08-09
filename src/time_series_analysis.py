@@ -1,10 +1,12 @@
-from pathlib import Path
-
 import pandas as pd
 
+from src.contracts.paths import (
+    EXPENSES_DATA,
+    MONTHLY_KPI_DATA,
+    SALES_DATA,
+)
 
-SALES_DATA = Path("data/processed/sales.parquet")
-EXPENSE_DATA = Path("data/processed/expenses.parquet")
+EXPENSE_DATA = EXPENSES_DATA
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -337,9 +339,7 @@ def validate_against_kpi(
 ) -> bool:
     """Validate monthly sales totals against source KPI totals."""
 
-    kpi_path = Path(
-        "data/processed/monthly_kpi.parquet"
-    )
+    kpi_path = MONTHLY_KPI_DATA
 
     if not kpi_path.exists():
         raise FileNotFoundError(

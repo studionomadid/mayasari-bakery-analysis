@@ -1,10 +1,8 @@
-from pathlib import Path
-
 import pandas as pd
 
+from src.contracts.paths import PRODUCTS_DATA, SALES_DATA
 
-SALES_DATA = Path("data/processed/sales.parquet")
-PRODUCT_DATA = Path("data/processed/products.parquet")
+PRODUCT_DATA = PRODUCTS_DATA
 
 
 def load_sales_data() -> pd.DataFrame:
@@ -389,8 +387,7 @@ def validate_product_profitability(
 
     all_pass = True
 
-    for metric in expected:
-        expected_value = expected[metric]
+    for metric, expected_value in expected.items():
         calculated_value = calculated[metric]
 
         passed = expected_value == calculated_value

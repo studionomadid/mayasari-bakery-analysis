@@ -1,10 +1,11 @@
-from pathlib import Path
 
 import pandas as pd
 
+from src.contracts.paths import CUSTOMERS_DATA, SALES_DATA
 
-SALES_DATA = Path("data/processed/sales.parquet")
-CUSTOMER_DATA = Path("data/processed/customers.parquet")
+CUSTOMER_DATA = CUSTOMERS_DATA
+
+
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -447,8 +448,7 @@ def validate_totals(
 
     all_pass = True
 
-    for metric in source_metrics:
-        source_value = source_metrics[metric]
+    for metric, source_value in source_metrics.items():
         aggregated_value = aggregated_metrics[
             metric
         ]

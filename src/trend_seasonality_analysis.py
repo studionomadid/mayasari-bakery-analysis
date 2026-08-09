@@ -1,9 +1,6 @@
-from pathlib import Path
-
 import pandas as pd
 
-
-SALES_DATA = Path("data/processed/sales.parquet")
+from src.contracts.paths import SALES_DATA
 
 
 def load_data() -> pd.DataFrame:
@@ -581,11 +578,7 @@ def validate_totals(
 
     all_pass = True
 
-    for metric in source_metrics:
-        source_value = source_metrics[
-            metric
-        ]
-
+    for metric, source_value in source_metrics.items():
         monthly_value = monthly_metrics[
             metric
         ]

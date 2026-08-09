@@ -1,10 +1,9 @@
-from pathlib import Path
-
 import pandas as pd
 
+from src.contracts.paths import CUSTOMERS_DATA, SALES_DATA
 
-SALES_DATA = Path("data/processed/sales.parquet")
-CUSTOMER_DATA = Path("data/processed/customers.parquet")
+CUSTOMER_DATA = CUSTOMERS_DATA
+
 
 SNAPSHOT_DATE = pd.Timestamp("2025-12-31")
 

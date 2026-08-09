@@ -1,9 +1,8 @@
-from pathlib import Path
-
 import pandas as pd
 
+from src.contracts.paths import SALES_DATA
 
-PROCESSED_DATA = Path("data/processed/sales.parquet")
+PROCESSED_DATA = SALES_DATA
 
 
 def load_sales() -> pd.DataFrame:

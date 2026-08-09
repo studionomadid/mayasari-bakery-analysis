@@ -10,26 +10,21 @@ between behavioral segmentation and economic customer value.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pandas as pd
 
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-
-ANALYTICS_DIR = PROJECT_ROOT / "data" / "analytics"
-
-CUSTOMER_DATASET = (
-    ANALYTICS_DIR / "customer_performance.parquet"
+from src.contracts.paths import (
+    ANALYTICS_DIR,
+    CUSTOMER_PERFORMANCE_DATA,
+    CUSTOMERS_DATA,
+    PROJECT_ROOT,
+    SALES_DATA,
 )
 
-SALES_DATASET = (
-    PROJECT_ROOT / "data" / "processed" / "sales.parquet"
-)
+CUSTOMER_DATASET = CUSTOMER_PERFORMANCE_DATA
 
-CUSTOMER_MASTER_DATASET = (
-    PROJECT_ROOT / "data" / "processed" / "customers.parquet"
-)
+SALES_DATASET = SALES_DATA
+
+CUSTOMER_MASTER_DATASET = CUSTOMERS_DATA
 
 OUTPUT_DATASET = (
     ANALYTICS_DIR / "customer_opportunity.parquet"
