@@ -883,6 +883,25 @@ Possible actions:
 
 Use CLV and RFM information to identify customers where recovery effort is economically justified.
 
+### Churn Risk Screening
+
+The M19 churn-risk analysis adds a recall-first screening layer to the customer retention framework.
+
+At the retained threshold of **0.25**, the Random Forest model captures **100.00% of observed churners**, but classifies **96.67% of the evaluated population as high-risk**.
+
+Key results:
+
+* Evaluated population: **120 customer-cutoff records**
+* Observed churners: **31**
+* High-risk customers: **116**
+* False positives: **85**
+* Recall: **100.00%**
+* Precision: **26.72%**
+
+The model should therefore be used as a **broad screening signal**, followed by secondary business filtering using customer value, intervention cost, engagement history, recency/frequency, and campaign capacity.
+
+Detailed findings are available in [`reports/m19_9_github_summary.md`](reports/m19_9_github_summary.md).
+
 ### Priority 3 — Develop Gold and Development Customers
 
 Increase customer value through:
@@ -1023,6 +1042,10 @@ reports/insights/
 ├── clv_insights.md
 ├── customer_opportunity_insights.md
 └── executive_insights.md
+
+reports/
+├── m19_9_business_findings_report.md
+└── m19_9_github_summary.md
 
 reports/presentation/
 ├── mayasari_bakery_management_deck.pptx
