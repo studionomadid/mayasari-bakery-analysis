@@ -255,6 +255,38 @@ The visualization generator is available at `scripts/generate_sales_visualizatio
 
 ---
 
+## Customer Performance Visualizations
+
+The customer-performance layer is supported by six reproducible visualizations generated from the validated customer analytics datasets in `data/analytics/`.
+
+### Annualized Customer Lifetime Value Distribution
+
+![Annualized Customer Lifetime Value Distribution](reports/figures/customer_clv_distribution.png)
+
+### Customer Segment Performance
+
+![Customer Segment Performance](reports/figures/customer_segment_performance.png)
+
+### Customer Value Tier Performance
+
+![Customer Value Tier Performance](reports/figures/customer_clv_tiers.png)
+
+### Customer Opportunity Analysis
+
+![Customer Opportunity Analysis](reports/figures/customer_opportunity_matrix.png)
+
+### Customer RFM Distribution
+
+![Customer RFM Distribution](reports/figures/customer_rfm_distribution.png)
+
+### Customer Performance Overview
+
+![Customer Performance Overview](reports/figures/customer_performance_overview.png)
+
+The visualization generator is available at `scripts/generate_customer_visualizations.py` and can be rerun whenever the validated customer analytics datasets change.
+
+---
+
 ## Product Performance
 
 The product portfolio contains:
