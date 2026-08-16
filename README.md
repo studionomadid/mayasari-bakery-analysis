@@ -1222,6 +1222,12 @@ The project therefore demonstrates how transactional data can be transformed int
 
 ---
 
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+The analytical dataset used in this portfolio case study is synthetic and is provided for demonstration and educational purposes.
+
 ## Author
 
 **StudioNomad**
