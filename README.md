@@ -223,6 +223,38 @@ Generate the Markdown report with:
 
 ---
 
+## Sales Performance Visualizations
+
+The sales-performance layer is supported by six reproducible visualizations generated directly from `data/processed/monthly_kpi.parquet`.
+
+### Monthly Net Sales
+
+![Monthly Net Sales](reports/figures/sales_monthly_net_sales.png)
+
+### Monthly Transactions
+
+![Monthly Transactions](reports/figures/sales_monthly_transactions.png)
+
+### Monthly Units Sold
+
+![Monthly Units Sold](reports/figures/sales_monthly_units.png)
+
+### Monthly Gross Profit
+
+![Monthly Gross Profit](reports/figures/sales_monthly_gross_profit.png)
+
+### Average Transaction Value
+
+![Average Transaction Value](reports/figures/sales_monthly_atv.png)
+
+### Sales Performance Overview
+
+![Sales Performance Overview](reports/figures/sales_performance_overview.png)
+
+The visualization generator is available at `scripts/generate_sales_visualizations.py` and can be rerun whenever the validated monthly KPI dataset changes.
+
+---
+
 ## Product Performance
 
 The product portfolio contains:
