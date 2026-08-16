@@ -153,6 +153,76 @@ Management should investigate the commercial and operational factors behind high
 
 ---
 
+## Sales Performance Analysis
+
+The sales-performance layer provides a reproducible monthly analysis built from the validated data/processed/monthly_kpi.parquet dataset.
+
+### Annual Sales Performance
+
+| KPI | Result |
+| --- | ---: |
+| Gross Sales | Rp 790.6M |
+| Discount | Rp 28.8M |
+| Net Sales | Rp 761.8M |
+| Transactions | 13,000 |
+| Units Sold | 38,602 |
+| Product Cost | Rp 427.5M |
+| Gross Profit | Rp 334.3M |
+| Gross Margin | 43.88% |
+| Operating Expense | Rp 167.5M |
+| Operating Profit | Rp 166.8M |
+| Operating Margin | 21.89% |
+| Average Transaction Value | Rp 58,600 |
+
+### First-to-Last Month Movement
+
+The first-to-last observed-month comparison shows:
+
+| Metric | Movement |
+| --- | ---: |
+| Net Sales | +30.97% |
+| Transactions | +18.65% |
+| Units Sold | +20.51% |
+| Gross Profit | +30.39% |
+| Average Transaction Value | +10.39% |
+
+Net sales therefore increased faster than transaction volume across the observed period, while average transaction value also increased.
+
+### Strongest and Weakest Months
+
+**December 2025** was the strongest observed month across the primary sales metrics:
+
+- Net sales: **Rp 77.9M**
+- Transactions: **1,209**
+- Units sold: **3,696**
+- Gross profit: **Rp 33.9M**
+- Average transaction value: **Rp 64,449**
+
+The lowest net sales month was **February 2025**, at approximately **Rp 57.1M**.
+
+These findings are descriptive. They identify observed performance patterns but do not establish causal explanations such as seasonality, campaign effects, product availability, or changes in customer behavior.
+
+### Reproducible Sales Analysis
+
+The sales-performance analysis is implemented as reusable Python business logic plus executable reporting scripts.
+
+Key implementation files:
+
+- src/sales_performance.py
+- scripts/analyze_sales_performance.py
+- scripts/generate_sales_performance_report.py
+- reports/sales_performance.md
+
+Generate the CLI analysis with:
+
+    python scripts/analyze_sales_performance.py
+
+Generate the Markdown report with:
+
+    python scripts/generate_sales_performance_report.py
+
+---
+
 ## Product Performance
 
 The product portfolio contains:
